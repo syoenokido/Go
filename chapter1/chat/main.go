@@ -17,23 +17,14 @@ type templataHandler struct {
 func (t *templataHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	t.once.Do(func() {
 		t.temp1 =
-			template.Must(template.ParseFiles(filepath.Join("templates",
+			template.Must(template.ParseFiles(filepath.Join("template",
 				t.filename)))
 	})
 	t.temp1.Execute(w, nil)
 }
 
 func main() {
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(`
-      <html>
-        <head>
-          <title>チャット</title>
-        </head>
-        <body> チャットしましょう! </body>
-      </html>
-      `))
-	})
+	http.Handle("/", &templataHandler{filename: "chat.html"})
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		log.Fatal("ListenAndServe:", err)
 	}
